@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_card"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Booking ID #0005" />
+
+            <TextView
+                android:layout_marginLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/shape_chip"
+                android:text="Pending"
+                android:textSize="12sp"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_marginTop="10dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <ImageView android:src="@drawable/ic_calendar" android:layout_width="18dp" android:layout_height="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp" android:text="25/12/2025" android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_marginTop="6dp" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <ImageView android:src="@drawable/ic_clock" android:layout_width="18dp" android:layout_height="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp" android:text="18:00" android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <LinearLayout android:layout_marginTop="6dp" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <ImageView android:src="@drawable/ic_guest" android:layout_width="18dp" android:layout_height="18dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp" android:text="4 guests" android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" android:text="allergic to seafood" android:textColor="@color/muted_text"/>
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.widget.Button
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:background="@drawable/shape_chip"
+                android:text="Edit"
+                android:textColor="#2366FC"/>
+
+            <Space android:layout_width="12dp" android:layout_height="1dp"/>
+
+            <android.widget.Button
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:background="@drawable/shape_chip"
+                android:text="Cancel"
+                android:textColor="@color/danger_red"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
