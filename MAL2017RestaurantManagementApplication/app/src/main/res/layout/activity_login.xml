@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5EF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- White Card -->
+        <LinearLayout
+            android:id="@+id/cardLogin"
+            android:orientation="vertical"
+            android:padding="28dp"
+            android:background="@drawable/white_card_radius20"
+            android:elevation="2dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Icon -->
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/restaurant_logo"
+                android:layout_gravity="center" />
+
+            <!-- Welcome text -->
+            <TextView
+                android:text="Welcome"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Please log in to continue."
+                android:textSize="16sp"
+                android:textColor="#A4A4A4"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Tabs -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Guest Tab -->
+                <LinearLayout
+                    android:id="@+id/tabGuest"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <TextView
+                        android:text="Guest Login"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF6900"
+                        android:paddingBottom="6dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Orange underline -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:background="#FF6900" />
+                </LinearLayout>
+
+                <!-- Staff Tab -->
+                <LinearLayout
+                    android:id="@+id/tabStaff"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <TextView
+                        android:text="Staff Login"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#A4A4A4"
+                        android:paddingBottom="6dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Gray underline -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"
+                        android:background="#A4A4A4" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- EMAIL field with left icon -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/edittext_bg"
+                android:paddingHorizontal="12dp"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="13dp"
+                    android:src="@android:drawable/ic_dialog_email"
+                    app:tint="#A4A4A4" />
+
+                <EditText
+                    android:id="@+id/login_email"
+                    android:hint="Email"
+                    android:textSize="14sp"
+                    android:paddingStart="12dp"
+                    android:background="@android:color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <!-- PASSWORD field with eye icon -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/edittext_bg"
+                android:paddingHorizontal="12dp"
+                android:layout_marginTop="14dp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <ImageView
+                    android:src="@android:drawable/ic_lock_lock"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:tint="#A4A4A4" />
+
+                <EditText
+                    android:id="@+id/login_password"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textSize="14sp"
+                    android:paddingStart="12dp"
+                    android:background="@android:color/transparent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:src="@android:drawable/ic_menu_view"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:tint="#A4A4A4" />
+            </LinearLayout>
+
+            <!-- Remember me + Forgot password -->
+            <CheckBox
+                android:id="@+id/rememberMeCheck"
+                android:text="Remember me"
+                android:textColor="#555555"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="Forgot password?"
+                android:textColor="#FF6900"
+                android:textSize="14sp"
+                android:gravity="end"
+                android:layout_marginTop="-36dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Login Button -->
+            <TextView
+                android:text="Login"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_ec3e13"
+                android:padding="10dp"
+                android:layout_marginTop="26dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <!-- New? create account -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="18dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="New to our restaurant? "
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:text="Create an account"
+                    android:textColor="#FF6900"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

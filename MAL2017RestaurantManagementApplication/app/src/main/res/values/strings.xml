@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MAL2017 Restaurant Management Application</string>
+    <string name="book_table">Book a Table</string>
+    <string name="confirm_booking">Confirm Booking</string>
+    <string name="my_bookings">My Bookings</string>
+    <string name="profile">Profile</string>
+    <string name="menu">Menu</string>
+    <string name="notification_preferences">Notification Preferences</string>
+    <string name="logout">Logout</string>
+</resources>
