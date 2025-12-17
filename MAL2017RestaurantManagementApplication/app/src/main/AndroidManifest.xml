@@ -13,35 +13,34 @@
         android:theme="@style/Theme.MAL2017RestaurantManagementApplication">
         <activity
             android:name=".ProfileActivity"
-            android:exported="true">
+            android:exported="false" />
+        <activity
+            android:name=".MenuAdapter"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".MenuItemModel"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
+        <activity
+         android:name=".MyBookingsActivity"
+            android:exported="false" />
+         <activity
+         android:name=".BookTableActivity"
+             android:exported="false" />
+        <activity
+            android:name=".MenuActivity"
+            android:exported="false" />
+        <activity
+             android:name=".CreateAccountActivity"
+             android:exported="false" />
+        <activity
+             android:name=".LoginActivity"
+             android:exported="true">
 <!--        <activity-->
-<!--            android:name=".MenuAdapter"-->
-<!--            android:exported="false" />-->
-<!--        <activity-->
-<!--            android:name=".MenuItemModel"-->
-<!--            android:exported="false" /> &lt;!&ndash; <activity &ndash;&gt;-->
-        <!-- android:name=".MyBookingsActivity" -->
-        <!-- android:exported="true"> -->
-        <!-- <activity -->
-        <!-- android:name=".BookTableActivity" -->
-        <!-- android:exported="true"> -->
-<!--        <activity-->
-<!--            android:name=".MenuActivity"-->
-<!--            android:exported="true">-->
+<!--             android:name=".MainActivity"-->
+<!--             android:exported="false" />-->
 
-            <!-- <activity -->
-            <!-- android:name=".CreateAccountActivity" -->
-            <!-- android:exported="false" /> -->
-
-
-            <!-- <activity -->
-            <!-- android:name=".LoginActivity" -->
-            <!-- android:exported="true"> -->
-
-
-            <!-- <activity -->
-            <!-- android:name=".MainActivity" -->
-            <!-- android:exported="true"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

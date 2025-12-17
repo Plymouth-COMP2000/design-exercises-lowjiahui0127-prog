@@ -60,8 +60,8 @@
 
                     <ImageView
                         android:id="@+id/ic_bell"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:src="@drawable/ic_bell"
                         android:layout_gravity="center"/>
 
@@ -92,7 +92,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="72dp"
+                    android:layout_height="80dp"
                     android:orientation="vertical"
                     android:padding="12dp"
                     android:background="@drawable/bg_card_rounded"
@@ -104,18 +104,19 @@
                         android:layout_width="26dp"
                         android:layout_height="26dp"/>
                     <TextView
+                        android:id="@+id/btnBookTable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Book Table"
                         android:gravity="center"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="7dp"
                         android:textColor="@color/light_text"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="72dp"
+                    android:layout_height="80dp"
                     android:orientation="vertical"
                     android:padding="12dp"
                     android:background="@drawable/bg_card_rounded"
@@ -131,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:text="My Bookings"
                         android:gravity="center"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="7dp"
                         android:textColor="@color/muted_text"/>
                 </LinearLayout>
             </LinearLayout>
@@ -200,7 +201,7 @@
     <!-- Bottom nav -->
     <include
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="75dp"
         android:id="@+id/bottom_bar"
         layout="@layout/include_bottom_nav"
         app:layout_constraintBottom_toBottomOf="parent"

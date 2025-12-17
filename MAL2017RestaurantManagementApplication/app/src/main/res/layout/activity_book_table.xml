@@ -11,14 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:paddingRight="20dp"
+        android:layout_marginBottom="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="24dp"
-            android:paddingBottom="100dp">
+            >
 
             <!-- Header -->
             <LinearLayout
@@ -269,6 +270,7 @@
 
             <!-- Confirm button -->
             <TextView
+                android:id="@+id/btnConfirmBooking"
                 android:text="Confirm Booking"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
@@ -283,9 +285,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/include_bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+    <include layout="@layout/include_bottom_nav" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

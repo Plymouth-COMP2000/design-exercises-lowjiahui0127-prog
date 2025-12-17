@@ -2,14 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottom_bar"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="75dp"
     android:background="@color/bottom_nav_bg"
     android:gravity="center"
     android:orientation="horizontal"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:layout_gravity="bottom">
 
     <LinearLayout
+        android:id="@+id/navMenu"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -32,6 +34,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/navBookTable"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -54,6 +57,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/navBookings"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -76,6 +80,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/navProfile"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -85,7 +90,7 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_profileorange" />
+            android:src="@drawable/ic_profileorange2" />
 
         <TextView
             android:layout_width="match_parent"

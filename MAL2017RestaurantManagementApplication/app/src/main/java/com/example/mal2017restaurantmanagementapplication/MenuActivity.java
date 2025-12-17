@@ -1,6 +1,8 @@
 package com.example.mal2017restaurantmanagementapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,12 +13,38 @@ import java.util.List;
 
 public class MenuActivity extends AppCompatActivity {
 
+    private void setupBottomNav() {
+        findViewById(R.id.navMenu).setOnClickListener(v -> {
+            if (!(this instanceof MenuActivity)) {
+                startActivity(new Intent(this, MenuActivity.class));
+            }
+        });
+
+        findViewById(R.id.navBookTable).setOnClickListener(v ->
+                startActivity(new Intent(this, BookTableActivity.class)));
+
+        findViewById(R.id.navBookings).setOnClickListener(v ->
+                startActivity(new Intent(this, MyBookingsActivity.class)));
+
+        findViewById(R.id.navProfile).setOnClickListener(v ->
+                startActivity(new Intent(this, ProfileActivity.class)));
+    }
+
     RecyclerView rvMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        setupBottomNav();
+
+        TextView btnBookTable = findViewById(R.id.btnBookTable);
+
+        btnBookTable.setOnClickListener(v -> {
+            Intent intent = new Intent(MenuActivity.this, BookTableActivity.class);
+            startActivity(intent);
+        });
 
         rvMenu = findViewById(R.id.rv_menu);
         rvMenu.setLayoutManager(new LinearLayoutManager(this));

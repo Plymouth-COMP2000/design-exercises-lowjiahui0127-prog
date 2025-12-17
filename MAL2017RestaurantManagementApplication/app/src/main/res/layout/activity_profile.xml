@@ -11,7 +11,7 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingTop="24dp"
-        android:paddingBottom="100dp">
+        android:layout_marginBottom="80dp">
 
         <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
 
@@ -122,19 +122,17 @@
             </LinearLayout>
 
             <android.widget.Button
+                android:id="@+id/btnLogout"
                 android:layout_marginTop="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/button_height"
                 android:background="@drawable/shape_button_orange"
-                android:text="⟲  Logout"
+                android:text="Logout"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"/>
 
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/include_bottom_nav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+    <include layout="@layout/include_bottom_nav" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
