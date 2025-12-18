@@ -52,6 +52,7 @@
                 android:paddingHorizontal="12dp">
 
                 <EditText
+                    android:id="@+id/etFullName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -71,6 +72,7 @@
                 android:paddingHorizontal="12dp">
 
                 <EditText
+                    android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -90,6 +92,7 @@
                 android:paddingHorizontal="12dp">
 
                 <EditText
+                    android:id="@+id/etPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
@@ -110,6 +113,7 @@
                 android:paddingHorizontal="12dp">
 
                 <EditText
+                    android:id="@+id/etPassword"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -120,10 +124,12 @@
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/ivPasswordToggle"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:tint="#777777" />
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Show password"
+                    app:tint="#777777" />
             </LinearLayout>
 
             <!-- CONFIRM PASSWORD -->
@@ -137,6 +143,7 @@
                 android:paddingHorizontal="12dp">
 
                 <EditText
+                    android:id="@+id/etConfirmPassword"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -147,10 +154,12 @@
                     android:textSize="14sp" />
 
                 <ImageView
+                    android:id="@+id/ivConfirmPasswordToggle"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_view"
-                    android:tint="#777777" />
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="Show confirm password"
+                    app:tint="#777777" />
             </LinearLayout>
 
             <!-- Create Account Button -->

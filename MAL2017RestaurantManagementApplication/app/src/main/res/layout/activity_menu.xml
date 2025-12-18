@@ -7,205 +7,191 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- Scroll content -->
-    <ScrollView
-        android:id="@+id/scroll_content"
+    <LinearLayout
+        android:id="@+id/menu_header"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="22dp">
 
-            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingTop="22dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:text="Welcome back, Jiahui"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/main_orange"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Discover our delicious dishes"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="48dp"
-                    android:layout_height="48dp">
-
-                    <ImageView
-                        android:id="@+id/ic_bell"
-                        android:layout_width="38dp"
-                        android:layout_height="38dp"
-                        android:src="@drawable/ic_bell"
-                        android:layout_gravity="center"/>
-
-                    <TextView
-                        android:id="@+id/badge_count"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/pill_label"
-                        android:gravity="center"
-                        android:text="2"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="4dp"
-                        android:layout_gravity="end|top"
-                        android:padding="0dp"
-                        android:translationX="4dp"/>
-                </FrameLayout>
-            </LinearLayout>
-
-            <!-- Quick action buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="18dp"
-                android:weightSum="2">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="80dp"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:background="@drawable/bg_card_rounded"
-                    android:layout_marginEnd="8dp"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:src="@drawable/ic_book_table"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"/>
-                    <TextView
-                        android:id="@+id/btnBookTable"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Book Table"
-                        android:gravity="center"
-                        android:layout_marginTop="7dp"
-                        android:textColor="@color/light_text"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="80dp"
-                    android:orientation="vertical"
-                    android:padding="12dp"
-                    android:background="@drawable/bg_card_rounded"
-                    android:layout_marginStart="8dp"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:src="@drawable/ic_my_bookings"
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="My Bookings"
-                        android:gravity="center"
-                        android:layout_marginTop="7dp"
-                        android:textColor="@color/muted_text"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Search bar -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:orientation="horizontal"
-                android:background="@drawable/search_bg"
-                android:layout_marginTop="16dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Search menu items..."
-                    android:textColor="@color/muted_text"/>
-
-                <ImageView
-                    android:src="@drawable/ic_search"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"/>
-            </LinearLayout>
-
-            <!-- Categories dropdown look -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_card_rounded"
-                android:layout_marginTop="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:gravity="center_vertical">
+                    android:text="Welcome back!"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/main_orange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="All Categories"
-                    android:layout_weight="1"
-                    android:textColor="@color/muted_text"/>
+                    android:text="Discover our delicious dishes"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp">
+
                 <ImageView
-                    android:src="@drawable/ic_filter"
+                    android:id="@+id/ic_bell"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_bell"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:id="@+id/badge_count"
                     android:layout_width="18dp"
-                    android:layout_height="18dp"/>
+                    android:layout_height="18dp"
+                    android:background="@drawable/pill_label"
+                    android:gravity="center"
+                    android:text="2"
+                    android:textSize="10sp"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="4dp"
+                    android:layout_gravity="end|top"
+                    android:padding="0dp"
+                    android:translationX="0dp"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Quick action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="18dp"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="80dp"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="@drawable/card_stroke_orange_fill"
+                android:layout_marginEnd="8dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:src="@drawable/ic_book_table"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"/>
+                <TextView
+                    android:id="@+id/btnBookTable"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Book Table"
+                    android:gravity="center"
+                    android:layout_marginTop="7dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/light_text"/>
             </LinearLayout>
 
-            <!-- Space -->
-            <View android:layout_width="match_parent" android:layout_height="12dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="80dp"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="@drawable/card_stroke_blue_fill"
+                android:layout_marginStart="8dp"
+                android:gravity="center">
 
-            <!-- RecyclerView content: menu cards -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_menu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"/>
-
-            <View android:layout_width="match_parent" android:layout_height="16dp"/>
+                <ImageView
+                    android:src="@drawable/ic_my_bookings"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"/>
+                <TextView
+                    android:id="@+id/btnMyBookings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="My Bookings"
+                    android:gravity="center"
+                    android:layout_marginTop="7dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/light_text"/>
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+
+        <!-- Search bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:background="@drawable/search_bg"
+            android:layout_marginTop="16dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Search menu items..."
+                android:textColor="@color/light_text"
+                android:background="@null"
+                android:padding="0dp"/>
+
+            <ImageView
+                android:id="@+id/iv_search_button"
+                android:src="@drawable/ic_search"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+
+        <!-- Categories spinner -->
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_rounded"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_menu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/menu_header"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
     <!-- Bottom nav -->
     <include
+        android:id="@+id/bottom_bar"
+        layout="@layout/include_guest_bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:id="@+id/bottom_bar"
-        layout="@layout/include_bottom_nav"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

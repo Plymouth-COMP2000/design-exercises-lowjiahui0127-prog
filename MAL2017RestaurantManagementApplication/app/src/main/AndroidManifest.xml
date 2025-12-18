@@ -11,11 +11,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MAL2017RestaurantManagementApplication">
-        <activity
-            android:name=".ProfileActivity"
+        <activity android:name=".StaffProfileActivity"
+            android:exported="false" />
+        <activity android:name=".StaffReservationsActivity"
+            android:exported="false" />
+        <activity android:name=".StaffMenuActivity"
+            android:exported="false" />
+        <activity android:name=".StaffDashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".MenuAdapter"
+            android:name=".GuestProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GuestMenuAdapter"
             android:exported="false"
             tools:ignore="Instantiatable" />
         <activity
@@ -23,16 +31,16 @@
             android:exported="false"
             tools:ignore="Instantiatable" />
         <activity
-         android:name=".MyBookingsActivity"
+         android:name=".GuestMyBookingsActivity"
             android:exported="false" />
          <activity
-         android:name=".BookTableActivity"
+         android:name=".GuestBookTableActivity"
              android:exported="false" />
         <activity
-            android:name=".MenuActivity"
+            android:name=".GuestMenuActivity"
             android:exported="false" />
         <activity
-             android:name=".CreateAccountActivity"
+             android:name=".GuestCreateAccountActivity"
              android:exported="false" />
         <activity
              android:name=".LoginActivity"

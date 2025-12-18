@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,79 +16,205 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/tv_booking_id"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Booking ID #0005" />
+                android:text="Booking #B001"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/main_orange"/>
 
             <TextView
+                android:id="@+id/tv_status"
                 android:layout_marginLeft="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:background="@drawable/shape_chip"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/pill_label"
                 android:text="Pending"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
-        <LinearLayout android:layout_marginTop="10dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-            <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <ImageView android:src="@drawable/ic_calendar" android:layout_width="18dp" android:layout_height="18dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp" android:text="25/12/2025" android:textColor="@color/muted_text"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_marginTop="6dp" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <ImageView android:src="@drawable/ic_clock" android:layout_width="18dp" android:layout_height="18dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp" android:text="18:00" android:textColor="@color/muted_text"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_marginTop="6dp" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <ImageView android:src="@drawable/ic_guest" android:layout_width="18dp" android:layout_height="18dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp" android:text="4 guests" android:textColor="@color/muted_text"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" android:text="allergic to seafood" android:textColor="@color/muted_text"/>
-        </LinearLayout>
-
-        <!-- Buttons -->
         <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/ic_calendar"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"/>
+                <TextView
+                    android:id="@+id/tv_booking_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="25/12/2025"
+                    android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/ic_clock"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"/>
+                <TextView
+                    android:id="@+id/tv_booking_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="18:00"
+                    android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/ic_guest"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"/>
+                <TextView
+                    android:id="@+id/tv_guest_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="4 guests"
+                    android:textColor="@color/muted_text"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/ic_info_grey"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"/>
+                <TextView
+                    android:id="@+id/tv_special_requests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="allergic to seafood"
+                    android:textColor="@color/muted_text"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Buttons for Guest View -->
+        <LinearLayout
+            android:id="@+id/guest_buttons"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <android.widget.Button
-                android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEdit"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:background="@drawable/shape_chip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Edit"
-                android:textColor="#2366FC"/>
+                android:textColor="#2366FC"
+                app:backgroundTint="#E9F0FF"
+                app:icon="@drawable/ic_editmenu"
+                app:iconTint="@null"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp" />
 
-            <Space android:layout_width="12dp" android:layout_height="1dp"/>
-
-            <android.widget.Button
-                android:layout_weight="1"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:background="@drawable/shape_chip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Cancel"
-                android:textColor="@color/danger_red"/>
+                android:textColor="#E70712"
+                app:backgroundTint="#FDE6E7"
+                app:icon="@drawable/ic_deletemenu"
+                app:iconTint="@null"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <!-- Buttons for Staff View -->
+        <LinearLayout
+            android:id="@+id/staff_buttons"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApprove"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Approve"
+                android:textColor="#4CAF50"
+                app:backgroundTint="#E8F5E9"
+                app:icon="@drawable/ic_confirm_white"
+                app:iconTint="#4CAF50"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReject"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:text="Reject"
+                android:textColor="#F44336"
+                app:backgroundTint="#FFEBEE"
+                app:icon="@drawable/ic_cancel_white"
+                app:iconTint="#F44336"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDelete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:text="Delete"
+                android:textColor="#9C27B0"
+                app:backgroundTint="#F3E5F5"
+                app:icon="@drawable/ic_deletemenu"
+                app:iconTint="#9C27B0"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:cornerRadius="8dp" />
         </LinearLayout>
 
     </LinearLayout>

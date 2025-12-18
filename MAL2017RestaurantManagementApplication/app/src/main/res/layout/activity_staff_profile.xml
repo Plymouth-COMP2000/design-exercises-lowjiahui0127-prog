@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background">
 
     <ScrollView
@@ -81,7 +81,7 @@
                 android:padding="20dp"
                 android:orientation="horizontal">
 
-                <ImageView android:src="@drawable/avatar_placeholder"
+                <ImageView android:src="@drawable/restaurant_logo"
                     android:layout_width="@dimen/avatar_size"
                     android:layout_height="@dimen/avatar_size"
                     android:scaleType="centerCrop"
@@ -95,13 +95,13 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="JIAHUI LOW"
+                        android:text="ADMIN"
                         android:textStyle="bold"
                         android:textSize="16sp"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="lowjiahui0127@gmail.com"
+                        android:text="admin123@gmail.com"
                         android:textColor="@color/muted_text"
                         android:layout_marginTop="4dp"/>
                 </LinearLayout>
@@ -234,5 +234,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/include_guest_bottom_nav" />
+    <include layout="@layout/include_staff_bottom_nav" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

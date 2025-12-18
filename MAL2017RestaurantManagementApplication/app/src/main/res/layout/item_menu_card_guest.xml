@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_price"
                 android:layout_marginTop="10dp"
+                android:textStyle="bold"
                 android:text="RM18.99"
                 android:textSize="14sp"
                 android:textColor="@color/main_orange" />

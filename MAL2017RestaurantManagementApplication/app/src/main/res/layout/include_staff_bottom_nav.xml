@@ -11,7 +11,7 @@
     android:layout_gravity="bottom">
 
     <LinearLayout
-        android:id="@+id/navMenu"
+        android:id="@+id/navDashboard"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -19,22 +19,51 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/navDashboardIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_dashboard" />
+
+        <TextView
+            android:id="@+id/navDashboardText"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:text="Dashboard"
+            android:textColor="@color/light_text"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navStaffMenu"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/navStaffMenuIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_menu" />
 
         <TextView
+            android:id="@+id/navStaffMenuText"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginTop="4dp"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="Menu"
             android:textColor="@color/light_text"
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/navBookTable"
+        android:id="@+id/navStaffReservations"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -42,45 +71,25 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:src="@drawable/ic_book" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:text="Book Table"
-            android:textColor="@color/light_text"
-            android:textSize="12sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/navBookings"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
+            android:id="@+id/navStaffReservationsIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_bookings" />
 
         <TextView
+            android:id="@+id/navStaffReservationsText"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginTop="4dp"
             android:gravity="center"
-            android:text="My Bookings"
+            android:textStyle="bold"
+            android:text="Reservations"
             android:textColor="@color/light_text"
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/navProfile"
+        android:id="@+id/navStaffProfile"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -88,17 +97,20 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/navStaffProfileIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_profileorange2" />
+            android:src="@drawable/ic_profile" />
 
         <TextView
+            android:id="@+id/navStaffProfileText"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginTop="4dp"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="Profile"
-            android:textColor="@color/main_orange"
+            android:textColor="@color/light_text"
             android:textSize="12sp" />
     </LinearLayout>
 
