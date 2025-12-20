@@ -1,6 +1,7 @@
 package com.example.mal2017restaurantmanagementapplication;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.io.File;
 import java.util.List;
 
 public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.ViewHolder> {
@@ -45,15 +47,24 @@ public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MenuItem menuItem = menuItems.get(position);
 
-        // Get image resource ID from image path
-        int imageResId = context.getResources().getIdentifier(
-                menuItem.getImagePath(),
-                "drawable",
-                context.getPackageName()
-        );
-
-        if (imageResId != 0) {
-            holder.ivDish.setImageResource(imageResId);
+        String imagePath = menuItem.getImagePath();
+        if (imagePath != null && !imagePath.isEmpty()) {
+            if (imagePath.contains("/") || imagePath.contains(".")) {
+                try {
+                    File imgFile = new File(imagePath);
+                    if (imgFile.exists()) {
+                        holder.ivDish.setImageURI(Uri.fromFile(imgFile));
+                    } else {
+                        loadDrawableResource(holder.ivDish, imagePath);
+                    }
+                } catch (Exception e) {
+                    loadDrawableResource(holder.ivDish, imagePath);
+                }
+            } else {
+                loadDrawableResource(holder.ivDish, imagePath);
+            }
+        } else {
+            holder.ivDish.setImageResource(R.drawable.pizza1);
         }
 
         holder.tvTitle.setText(menuItem.getName());
@@ -72,6 +83,24 @@ public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.View
                 listener.onDeleteClick(menuItem);
             }
         });
+    }
+
+    private void loadDrawableResource(ImageView imageView, String imageName) {
+        try {
+            int imageResId = context.getResources().getIdentifier(
+                    imageName,
+                    "drawable",
+                    context.getPackageName()
+            );
+
+            if (imageResId != 0) {
+                imageView.setImageResource(imageResId);
+            } else {
+                imageView.setImageResource(R.drawable.pizza1);
+            }
+        } catch (Exception e) {
+            imageView.setImageResource(R.drawable.pizza1);
+        }
     }
 
     @Override

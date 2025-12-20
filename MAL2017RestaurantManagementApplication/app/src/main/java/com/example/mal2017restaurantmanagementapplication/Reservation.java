@@ -2,6 +2,8 @@ package com.example.mal2017restaurantmanagementapplication;
 
 public class Reservation {
     private int id;
+    private String guestName;
+    private String guestEmail;
     private String date; // Format: "dd/MM/yyyy"
     private String time; // Format: "HH:mm"
     private int guestCount;
@@ -13,12 +15,14 @@ public class Reservation {
     public Reservation() {
         this.createdAt = System.currentTimeMillis();
         this.status = "pending";
-        this.reservationNumber = generateReservationNumber();
     }
 
-    public Reservation(int id, String date, String time, int guestCount,
-                       String specialRequests, String status, String reservationNumber) {
+    public Reservation(int id, String guestName, String guestEmail, String date,
+                       String time, int guestCount, String specialRequests,
+                       String status, String reservationNumber) {
         this.id = id;
+        this.guestName = guestName;
+        this.guestEmail = guestEmail;
         this.date = date;
         this.time = time;
         this.guestCount = guestCount;
@@ -28,14 +32,15 @@ public class Reservation {
         this.createdAt = System.currentTimeMillis();
     }
 
-    private String generateReservationNumber() {
-        // 在实际应用中，这应该从数据库获取最新的编号
-        return "B" + String.format("%03d", System.currentTimeMillis() % 1000);
-    }
-
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
+
+    public String getGuestName() { return guestName; }
+    public void setGuestName(String guestName) { this.guestName = guestName; }
+
+    public String getGuestEmail() { return guestEmail; }
+    public void setGuestEmail(String guestEmail) { this.guestEmail = guestEmail; }
 
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }

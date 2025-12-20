@@ -1,63 +1,90 @@
 package com.example.mal2017restaurantmanagementapplication;
 
+import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.Map;
 
 public class UserSessionManager {
-
     private static final String PREF_NAME = "user_session";
-    private static final String KEY_USER_ROLE = "user_role";
     private static final String KEY_USER_EMAIL = "user_email";
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_ROLE = "user_role";
     private static final String KEY_IS_LOGGED_IN = "is_logged_in";
-    private static final String KEY_REMEMBER_ME = "remember_me";
+    private static final String KEY_USER_ID = "user_id";
+    private static final String KEY_LAST_EMAIL = "last_email";
 
-    private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-    }
+    public static void createLoginSession(Context context, String userId, String name, String email, String role) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
 
-    public static void saveUserRole(Context context, String role) {
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putBoolean(KEY_IS_LOGGED_IN, true);
+        editor.putString(KEY_USER_ID, userId);
+        editor.putString(KEY_USER_EMAIL, email);
+        editor.putString(KEY_USER_NAME, name);
         editor.putString(KEY_USER_ROLE, role);
         editor.apply();
     }
 
-    public static String getUserRole(Context context) {
-        return getSharedPreferences(context).getString(KEY_USER_ROLE, "GUEST");
+    public static String getUserId(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        Object value = pref.getAll().get(KEY_USER_ID);
+        if (value == null) return "";
+        return String.valueOf(value);
     }
 
-    public static void setLoggedIn(Context context, boolean isLoggedIn) {
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
-        editor.apply();
+    public static int getUserIdInt(Context context) {
+        try {
+            String userIdStr = getUserId(context);
+            if (userIdStr.isEmpty()) return -1;
+            return Integer.parseInt(userIdStr);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     public static boolean isLoggedIn(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_IS_LOGGED_IN, false);
-    }
-
-    public static void saveUserEmail(Context context, String email) {
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putString(KEY_USER_EMAIL, email);
-        editor.apply();
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
     public static String getUserEmail(Context context) {
-        return getSharedPreferences(context).getString(KEY_USER_EMAIL, "");
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getString(KEY_USER_EMAIL, "");
     }
 
-    public static void setRememberMe(Context context, boolean remember) {
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-        editor.putBoolean(KEY_REMEMBER_ME, remember);
-        editor.apply();
+    public static String getUserName(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getString(KEY_USER_NAME, "");
     }
 
-    public static boolean getRememberMe(Context context) {
-        return getSharedPreferences(context).getBoolean(KEY_REMEMBER_ME, false);
+    public static String getUserRole(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getString(KEY_USER_ROLE, "");
     }
 
-    public static void clearAllData(Context context) {
-        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+    public static void logout(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
         editor.clear();
         editor.apply();
+
+        Intent intent = new Intent(context, LoginActivity.class);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        context.startActivity(intent);
+    }
+
+    public static void saveLastEmail(Context context, String email) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(KEY_LAST_EMAIL, email);
+        editor.apply();
+    }
+
+    public static String getLastEmail(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getString(KEY_LAST_EMAIL, "");
     }
 }

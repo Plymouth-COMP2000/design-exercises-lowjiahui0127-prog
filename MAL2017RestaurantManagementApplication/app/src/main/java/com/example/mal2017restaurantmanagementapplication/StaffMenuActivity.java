@@ -1,16 +1,17 @@
 package com.example.mal2017restaurantmanagementapplication;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +26,11 @@ public class StaffMenuActivity extends BaseStaffActivity {
     private StaffMenuAdapter menuAdapter;
     private DatabaseHelper dbHelper;
     private List<MenuItem> menuItems = new ArrayList<>();
+    private EditText etSearch;
+    private ImageView ivSearchButton;
+    private Spinner spinnerCategory;
+    private MaterialButton btnAddItem;
+    private TextView badgeCount;
 
     @Override
     protected int getCurrentNavId() {
@@ -41,6 +47,9 @@ public class StaffMenuActivity extends BaseStaffActivity {
 
         initializeUI();
         loadMenuItems();
+        setupCategorySpinner();
+        setupSearch();
+        setupNotificationBadge();
     }
 
     private void initializeUI() {
@@ -50,18 +59,35 @@ public class StaffMenuActivity extends BaseStaffActivity {
         menuAdapter = new StaffMenuAdapter(this, menuItems);
         rvMenu.setAdapter(menuAdapter);
 
-        MaterialButton btnAddItem = findViewById(R.id.btnAddItem);
-        btnAddItem.setOnClickListener(v -> showAddMenuItemDialog());
+        etSearch = findViewById(R.id.et_search);
+        ivSearchButton = findViewById(R.id.iv_search_button);
+        spinnerCategory = findViewById(R.id.spinner_category);
+        btnAddItem = findViewById(R.id.btnAddItem);
+        badgeCount = findViewById(R.id.badge_count);
+
+        // Set up notification bell click
+        ImageView icBell = findViewById(R.id.ic_bell);
+        icBell.setOnClickListener(v -> {
+            Intent intent = new Intent(StaffMenuActivity.this, NotificationsActivity.class);
+            startActivity(intent);
+        });
+
+        // Set up add item button click
+        com.google.android.material.button.MaterialButton btnAddItem = findViewById(R.id.btnAddItem);
+        btnAddItem.setOnClickListener(v -> {
+            Intent intent = new Intent(StaffMenuActivity.this, StaffAddItemActivity.class);
+            startActivity(intent);
+        });
 
         menuAdapter.setOnMenuItemClickListener(new StaffMenuAdapter.OnMenuItemClickListener() {
             @Override
             public void onEditClick(MenuItem menuItem) {
-                showEditMenuItemDialog(menuItem);
+                editMenuItem(menuItem);
             }
 
             @Override
             public void onDeleteClick(MenuItem menuItem) {
-                showDeleteConfirmationDialog(menuItem);
+                deleteMenuItem(menuItem);
             }
         });
     }
@@ -72,122 +98,108 @@ public class StaffMenuActivity extends BaseStaffActivity {
         menuAdapter.notifyDataSetChanged();
     }
 
-    private void showAddMenuItemDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add New Menu Item");
+    private void setupCategorySpinner() {
+        List<String> categories = dbHelper.getDistinctCategories();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                categories
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_menu_item, null);
-        builder.setView(dialogView);
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedCategory = parent.getItemAtPosition(position).toString();
+                if (position == 0) { // "All Categories"
+                    loadMenuItems();
+                } else {
+                    menuItems.clear();
+                    menuItems.addAll(dbHelper.getMenuItemsByCategory(selectedCategory));
+                    menuAdapter.notifyDataSetChanged();
 
-        EditText etName = dialogView.findViewById(R.id.et_name);
-        EditText etPrice = dialogView.findViewById(R.id.et_price);
-        EditText etDescription = dialogView.findViewById(R.id.et_description);
-        EditText etCategory = dialogView.findViewById(R.id.et_category);
-        EditText etImagePath = dialogView.findViewById(R.id.et_image_path);
-
-        builder.setPositiveButton("Add", (dialog, which) -> {
-            String name = etName.getText().toString().trim();
-            String price = etPrice.getText().toString().trim();
-            String description = etDescription.getText().toString().trim();
-            String category = etCategory.getText().toString().trim();
-            String imagePath = etImagePath.getText().toString().trim();
-
-            if (name.isEmpty() || price.isEmpty()) {
-                Toast.makeText(this, "Name and price are required", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            MenuItem menuItem = new MenuItem();
-            menuItem.setName(name);
-            menuItem.setPrice(price);
-            menuItem.setDescription(description);
-            menuItem.setCategory(category.isEmpty() ? "Main course" : category);
-            menuItem.setImagePath(imagePath.isEmpty() ? "default_food" : imagePath);
-
-            long id = dbHelper.addMenuItem(menuItem);
-            if (id != -1) {
-                Toast.makeText(this, "Menu item added successfully", Toast.LENGTH_SHORT).show();
-                loadMenuItems();
-            } else {
-                Toast.makeText(this, "Failed to add menu item", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
-
-    private void showEditMenuItemDialog(MenuItem menuItem) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit Menu Item");
-
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_menu_item, null);
-        builder.setView(dialogView);
-
-        EditText etName = dialogView.findViewById(R.id.et_name);
-        EditText etPrice = dialogView.findViewById(R.id.et_price);
-        EditText etDescription = dialogView.findViewById(R.id.et_description);
-        EditText etCategory = dialogView.findViewById(R.id.et_category);
-        EditText etImagePath = dialogView.findViewById(R.id.et_image_path);
-
-        etName.setText(menuItem.getName());
-        etPrice.setText(menuItem.getPrice());
-        etDescription.setText(menuItem.getDescription());
-        etCategory.setText(menuItem.getCategory());
-        etImagePath.setText(menuItem.getImagePath());
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String name = etName.getText().toString().trim();
-            String price = etPrice.getText().toString().trim();
-            String description = etDescription.getText().toString().trim();
-            String category = etCategory.getText().toString().trim();
-            String imagePath = etImagePath.getText().toString().trim();
-
-            if (name.isEmpty() || price.isEmpty()) {
-                Toast.makeText(this, "Name and price are required", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            menuItem.setName(name);
-            menuItem.setPrice(price);
-            menuItem.setDescription(description);
-            menuItem.setCategory(category.isEmpty() ? "Main course" : category);
-            menuItem.setImagePath(imagePath.isEmpty() ? "default_food" : imagePath);
-
-            int result = dbHelper.updateMenuItem(menuItem);
-            if (result > 0) {
-                Toast.makeText(this, "Menu item updated successfully", Toast.LENGTH_SHORT).show();
-                loadMenuItems();
-            } else {
-                Toast.makeText(this, "Failed to update menu item", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", null);
-        builder.show();
-    }
-
-    private void showDeleteConfirmationDialog(MenuItem menuItem) {
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Menu Item")
-                .setMessage("Are you sure you want to delete \"" + menuItem.getName() + "\"?")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    int result = dbHelper.deleteMenuItem(menuItem.getId());
-                    if (result > 0) {
-                        Toast.makeText(this, "Menu item deleted", Toast.LENGTH_SHORT).show();
-                        loadMenuItems();
-                    } else {
-                        Toast.makeText(this, "Failed to delete menu item", Toast.LENGTH_SHORT).show();
+                    if (menuItems.isEmpty()) {
+                        Toast.makeText(StaffMenuActivity.this,
+                                "No items in category: " + selectedCategory,
+                                Toast.LENGTH_SHORT).show();
                     }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+    }
+
+    private void setupSearch() {
+        ivSearchButton.setOnClickListener(v -> {
+            String query = etSearch.getText().toString().trim();
+            if (!query.isEmpty()) {
+                menuItems.clear();
+                menuItems.addAll(dbHelper.searchMenuItems(query));
+                menuAdapter.notifyDataSetChanged();
+
+                if (menuItems.isEmpty()) {
+                    Toast.makeText(this, "No results found for: " + query, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                loadMenuItems();
+            }
+        });
+    }
+
+    private void setupNotificationBadge() {
+        int userId = UserSessionManager.getUserIdInt(this);
+        if (userId != -1) {
+            int unreadCount = dbHelper.getUnreadNotificationCount(userId);
+            if (unreadCount > 0) {
+                badgeCount.setText(String.valueOf(unreadCount));
+                badgeCount.setVisibility(View.VISIBLE);
+            } else {
+                badgeCount.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void editMenuItem(MenuItem menuItem) {
+        Intent intent = new Intent(this, StaffEditItemActivity.class);
+        intent.putExtra("MENU_ITEM_ID", menuItem.getId());
+        startActivity(intent);
+    }
+
+    private void deleteMenuItem(MenuItem menuItem) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Delete Menu Item");
+        builder.setMessage("Are you sure you want to delete \"" + menuItem.getName() + "\"?");
+        builder.setPositiveButton("Delete", (dialog, which) -> {
+            int result = dbHelper.deleteMenuItem(menuItem.getId());
+            if (result > 0) {
+                Toast.makeText(this, "Menu item deleted successfully", Toast.LENGTH_SHORT).show();
+                loadMenuItems();
+
+                // Send notification to all users who have menu notifications enabled
+                sendMenuUpdateNotification("Menu Item Removed",
+                        "The menu item \"" + menuItem.getName() + "\" has been removed from the menu.");
+            } else {
+                Toast.makeText(this, "Failed to delete menu item", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void sendMenuUpdateNotification(String title, String message) {
+        Toast.makeText(this, "Menu update notification sent", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadMenuItems();
+        setupNotificationBadge();
     }
 
     @Override

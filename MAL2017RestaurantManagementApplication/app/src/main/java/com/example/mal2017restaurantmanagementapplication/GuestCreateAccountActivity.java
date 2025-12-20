@@ -9,13 +9,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mal2017restaurantmanagementapplication.api.VolleyApiService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class GuestCreateAccountActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etPhone, etPassword, etConfirmPassword;
     private ImageView ivPasswordToggle, ivConfirmPasswordToggle;
     private TextView btnCreateAccount, tvSignIn;
+    private VolleyApiService apiService;
 
     private boolean isPasswordVisible = false;
     private boolean isConfirmPasswordVisible = false;
@@ -24,6 +31,8 @@ public class GuestCreateAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
+
+        apiService = VolleyApiService.getInstance(this);
 
         initViews();
         setupPasswordToggle();
@@ -46,50 +55,41 @@ public class GuestCreateAccountActivity extends AppCompatActivity {
     }
 
     private void setupPasswordToggle() {
-        ivPasswordToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isPasswordVisible = !isPasswordVisible;
-                if (isPasswordVisible) {
-                    etPassword.setTransformationMethod(null);
-                    ivPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
-                } else {
-                    etPassword.setTransformationMethod(new PasswordTransformationMethod());
-                    ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
-                }
-                etPassword.setSelection(etPassword.getText().length());
+        ivPasswordToggle.setOnClickListener(v -> {
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                etPassword.setTransformationMethod(null);
+                ivPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
+            } else {
+                etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
             }
+            etPassword.setSelection(etPassword.getText().length());
         });
 
-        ivConfirmPasswordToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isConfirmPasswordVisible = !isConfirmPasswordVisible;
-                if (isConfirmPasswordVisible) {
-                    etConfirmPassword.setTransformationMethod(null);
-                    ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
-                } else {
-                    etConfirmPassword.setTransformationMethod(new PasswordTransformationMethod());
-                    ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
-                }
-                etConfirmPassword.setSelection(etConfirmPassword.getText().length());
+        ivConfirmPasswordToggle.setOnClickListener(v -> {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible;
+            if (isConfirmPasswordVisible) {
+                etConfirmPassword.setTransformationMethod(null);
+                ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
+            } else {
+                etConfirmPassword.setTransformationMethod(new PasswordTransformationMethod());
+                ivConfirmPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
             }
+            etConfirmPassword.setSelection(etConfirmPassword.getText().length());
         });
     }
 
     private void setupCreateAccountButton() {
-        btnCreateAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String fullName = etFullName.getText().toString().trim();
-                String email = etEmail.getText().toString().trim();
-                String phone = etPhone.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-                String confirmPassword = etConfirmPassword.getText().toString().trim();
+        btnCreateAccount.setOnClickListener(v -> {
+            String fullName = etFullName.getText().toString().trim();
+            String email = etEmail.getText().toString().trim();
+            String phone = etPhone.getText().toString().trim();
+            String password = etPassword.getText().toString().trim();
+            String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-                if (validateAllFields(fullName, email, phone, password, confirmPassword)) {
-                    registerAccount(fullName, email, phone, password);
-                }
+            if (validateAllFields(fullName, email, phone, password, confirmPassword)) {
+                registerAccount(fullName, email, phone, password);
             }
         });
     }
@@ -152,26 +152,65 @@ public class GuestCreateAccountActivity extends AppCompatActivity {
     }
 
     private void registerAccount(String fullName, String email, String phone, String password) {
-        // TODO: 这里添加实际的注册逻辑，比如调用API
+        btnCreateAccount.setText("Creating Account...");
+        btnCreateAccount.setEnabled(false);
 
-        // 显示成功消息
-        Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+        JSONObject userData = new JSONObject();
+        try {
+            String username = email.split("@")[0] + "_" + System.currentTimeMillis();
+            String[] nameParts = fullName.split(" ");
+            String firstName = nameParts.length > 0 ? nameParts[0] : fullName;
+            String lastName = nameParts.length > 1 ? nameParts[1] : "";
 
-        // 返回登录页面，并传递新注册的邮箱
-        Intent intent = new Intent(GuestCreateAccountActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+            userData.put("username", username);
+            userData.put("password", password);
+            userData.put("firstname", firstName);
+            userData.put("lastname", lastName);
+            userData.put("email", email);
+            userData.put("contact", phone);
+            userData.put("usertype", "guest");
+
+        } catch (JSONException e) {
+            btnCreateAccount.setText("Register");
+            btnCreateAccount.setEnabled(true);
+            Toast.makeText(this, "Error creating user data", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        apiService.createUser(userData, new VolleyApiService.ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                runOnUiThread(() -> {
+                    btnCreateAccount.setText("Register");
+                    btnCreateAccount.setEnabled(true);
+
+                    Toast.makeText(GuestCreateAccountActivity.this,
+                            "Account created successfully! Please login with your credentials.",
+                            Toast.LENGTH_LONG).show();
+
+                    finish();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    btnCreateAccount.setText("Register");
+                    btnCreateAccount.setEnabled(true);
+
+                    Toast.makeText(GuestCreateAccountActivity.this,
+                            "Failed to create account: " + error,
+                            Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void setupSignInLink() {
-        tvSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 返回登录页面
-                Intent intent = new Intent(GuestCreateAccountActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        tvSignIn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 }

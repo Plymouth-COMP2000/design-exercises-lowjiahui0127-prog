@@ -14,24 +14,20 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
-public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder> {
+public class GuestReservationAdapter extends RecyclerView.Adapter<GuestReservationAdapter.ViewHolder> {
 
     private Context context;
     private List<Reservation> reservations;
     private OnReservationClickListener listener;
-    private boolean isStaffView;
 
     public interface OnReservationClickListener {
         void onEditClick(Reservation reservation);
         void onCancelClick(Reservation reservation);
-        void onDeleteClick(Reservation reservation);
-        void onStatusChangeClick(Reservation reservation, String newStatus);
     }
 
-    public ReservationAdapter(Context context, List<Reservation> reservations, boolean isStaffView) {
+    public GuestReservationAdapter(Context context, List<Reservation> reservations) {
         this.context = context;
         this.reservations = reservations;
-        this.isStaffView = isStaffView;
     }
 
     public void setOnReservationClickListener(OnReservationClickListener listener) {
@@ -49,7 +45,9 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Reservation reservation = reservations.get(position);
 
-        holder.tvBookingId.setText("Booking " + reservation.getReservationNumber());
+        holder.tvBookingId.setText(reservation.getReservationNumber());
+        holder.tvGuestName.setText(reservation.getGuestName());
+        holder.tvGuestEmail.setText(reservation.getGuestEmail());
         holder.tvBookingDate.setText(reservation.getDate());
         holder.tvBookingTime.setText(reservation.getTime());
         holder.tvGuestCount.setText(reservation.getGuestCount() + " guests");
@@ -61,55 +59,59 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             holder.tvSpecialRequests.setVisibility(View.GONE);
         }
 
-        // Set status text and color
+        holder.btnEdit.setOnClickListener(v -> {
+            android.util.Log.d("ClickDebug", "Edit button clicked at position: " + position);
+            android.util.Log.d("ClickDebug", "Reservation ID: " + reservation.getId());
+
+            if (listener != null) {
+                listener.onEditClick(reservation);
+            } else {
+                android.util.Log.e("ClickDebug", "ERROR: Listener is null!");
+            }
+        });
+
+        holder.btnCancel.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCancelClick(reservation);
+            }
+        });
+
+        // Set status text, color, and background
         String status = reservation.getStatus();
         holder.tvStatus.setText(status);
 
         int statusColor;
+        int statusBgResId;
         switch (status.toLowerCase()) {
             case "pending":
                 statusColor = context.getResources().getColor(R.color.status_pending);
+                statusBgResId = R.drawable.status_pending_bg;
                 break;
             case "confirmed":
                 statusColor = context.getResources().getColor(R.color.status_confirmed);
+                statusBgResId = R.drawable.status_confirmed_bg;
                 break;
             case "cancelled":
                 statusColor = context.getResources().getColor(R.color.status_cancelled);
+                statusBgResId = R.drawable.status_cancelled_bg;
                 break;
             default:
                 statusColor = context.getResources().getColor(R.color.muted_text);
+                statusBgResId = R.drawable.shape_chip;
         }
         holder.tvStatus.setTextColor(statusColor);
+        holder.tvStatus.setBackgroundResource(statusBgResId);
 
-        // Show/hide buttons based on user type and status
-        if (isStaffView) {
-            // Staff view: Show Approve/Reject buttons for pending reservations
+        // Show/hide buttons based on status
+        holder.guestButtons.setVisibility(View.VISIBLE);
+        holder.staffButtons.setVisibility(View.GONE);
+
+        if ("cancelled".equalsIgnoreCase(status)) {
             holder.btnEdit.setVisibility(View.GONE);
             holder.btnCancel.setVisibility(View.GONE);
-
-            if ("pending".equalsIgnoreCase(status)) {
-                holder.btnApprove.setVisibility(View.VISIBLE);
-                holder.btnReject.setVisibility(View.VISIBLE);
-                holder.btnDelete.setVisibility(View.VISIBLE);
-            } else {
-                holder.btnApprove.setVisibility(View.GONE);
-                holder.btnReject.setVisibility(View.GONE);
-                holder.btnDelete.setVisibility(View.VISIBLE);
-            }
         } else {
-            // Guest view: Show Edit/Cancel buttons for pending/confirmed reservations
-            holder.btnApprove.setVisibility(View.GONE);
-            holder.btnReject.setVisibility(View.GONE);
-
-            if ("cancelled".equalsIgnoreCase(status)) {
-                holder.btnEdit.setVisibility(View.GONE);
-                holder.btnCancel.setVisibility(View.GONE);
-                holder.btnDelete.setVisibility(View.VISIBLE);
-            } else {
-                holder.btnEdit.setVisibility(View.VISIBLE);
-                holder.btnCancel.setVisibility(View.VISIBLE);
-                holder.btnDelete.setVisibility(View.GONE);
-            }
+            holder.btnEdit.setVisibility(View.VISIBLE);
+            holder.btnCancel.setVisibility(View.VISIBLE);
         }
 
         // Set button click listeners
@@ -124,24 +126,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                 listener.onCancelClick(reservation);
             }
         });
-
-        holder.btnDelete.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onDeleteClick(reservation);
-            }
-        });
-
-        holder.btnApprove.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onStatusChangeClick(reservation, "confirmed");
-            }
-        });
-
-        holder.btnReject.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onStatusChangeClick(reservation, "cancelled");
-            }
-        });
     }
 
     @Override
@@ -150,23 +134,27 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvBookingId, tvBookingDate, tvBookingTime, tvGuestCount, tvSpecialRequests, tvStatus;
-        MaterialButton btnEdit, btnCancel, btnDelete, btnApprove, btnReject;
+        TextView tvBookingId, tvStatus, tvGuestName, tvGuestEmail,
+                tvBookingDate, tvBookingTime, tvGuestCount, tvSpecialRequests;
+        ViewGroup guestButtons, staffButtons;
+        MaterialButton btnEdit , btnCancel ;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvBookingId = itemView.findViewById(R.id.tv_booking_id);
+            tvStatus = itemView.findViewById(R.id.tv_status);
+            tvGuestName = itemView.findViewById(R.id.tv_guest_name);
+            tvGuestEmail = itemView.findViewById(R.id.tv_guest_email);
             tvBookingDate = itemView.findViewById(R.id.tv_booking_date);
             tvBookingTime = itemView.findViewById(R.id.tv_booking_time);
             tvGuestCount = itemView.findViewById(R.id.tv_guest_count);
             tvSpecialRequests = itemView.findViewById(R.id.tv_special_requests);
-            tvStatus = itemView.findViewById(R.id.tv_status);
 
-            btnEdit = itemView.findViewById(R.id.btnEdit);
-            btnCancel = itemView.findViewById(R.id.btnCancel);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
-            btnApprove = itemView.findViewById(R.id.btnApprove);
-            btnReject = itemView.findViewById(R.id.btnReject);
+            guestButtons = itemView.findViewById(R.id.guest_buttons);
+            staffButtons = itemView.findViewById(R.id.staff_buttons);
+
+            btnEdit  = itemView.findViewById(R.id.btnEditBooking);
+            btnCancel  = itemView.findViewById(R.id.btnCancelBooking);
         }
     }
 }

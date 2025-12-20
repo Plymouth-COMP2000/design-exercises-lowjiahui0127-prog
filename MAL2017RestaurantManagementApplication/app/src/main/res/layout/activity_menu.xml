@@ -47,13 +47,14 @@
             </LinearLayout>
 
             <FrameLayout
+                android:id="@+id/notification_icon_container"
                 android:layout_width="48dp"
                 android:layout_height="48dp">
 
                 <ImageView
                     android:id="@+id/ic_bell"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:src="@drawable/ic_bell"
                     android:layout_gravity="center"/>
 

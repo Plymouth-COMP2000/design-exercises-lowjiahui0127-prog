@@ -126,4 +126,7 @@ public abstract class BaseGuestActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    protected void updateNotificationBadge() {
+    }
 }

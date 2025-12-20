@@ -1,8 +1,8 @@
 package com.example.mal2017restaurantmanagementapplication;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -39,15 +39,30 @@ public class GuestEditBookingActivity extends BaseGuestActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_booking);
 
+        android.util.Log.d("EditDebug", "=== GuestEditBookingActivity onCreate ===");
+
         setupBottomNav();
         dbHelper = new DatabaseHelper(this);
 
         // Get reservation ID from intent
         reservationId = getIntent().getIntExtra("RESERVATION_ID", -1);
+        android.util.Log.d("EditDebug", "Received RESERVATION_ID from intent: " + reservationId);
+
         if (reservationId == -1) {
+            android.util.Log.e("EditDebug", "ERROR: Invalid reservation ID (-1)");
             Toast.makeText(this, "Invalid reservation", Toast.LENGTH_SHORT).show();
             finish();
             return;
+        }
+
+        Reservation testReservation = dbHelper.getReservationById(reservationId);
+        if (testReservation == null) {
+            android.util.Log.e("EditDebug", "ERROR: Cannot find reservation with ID: " + reservationId);
+            Toast.makeText(this, "Reservation not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        } else {
+            android.util.Log.d("EditDebug", "Found reservation: " + testReservation.getReservationNumber());
         }
 
         initializeUI();
@@ -240,21 +255,44 @@ public class GuestEditBookingActivity extends BaseGuestActivity {
         if (result > 0) {
             Toast.makeText(this, "Reservation updated successfully", Toast.LENGTH_SHORT).show();
 
-            // Send notification
-            sendNotification("Reservation Updated",
-                    "Your reservation " + reservation.getReservationNumber() + " has been updated.");
+            sendGuestUpdateNotification(reservation);
+            sendStaffUpdateNotification(reservation);
 
-            // Navigate back to My Bookings
             Intent intent = new Intent(this, GuestMyBookingsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        } else {
-            Toast.makeText(this, "Failed to update reservation", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void sendNotification(String title, String message) {
-        Toast.makeText(this, title + ": " + message, Toast.LENGTH_LONG).show();
+    private void sendGuestUpdateNotification(Reservation reservation) {
+        if (GuestProfileActivity.shouldSendNotification(this, "reservation_update")) {
+            NotificationHelper notificationHelper = new NotificationHelper(this);
+            String title = "Reservation Updated";
+            String message = "Your reservation #" + reservation.getReservationNumber() +
+                    " has been updated successfully";
+
+            notificationHelper.sendReservationNotification(title, message, reservation.getReservationNumber());
+        }
+    }
+
+    private void sendStaffUpdateNotification(Reservation reservation) {
+        NotificationHelper notificationHelper = new NotificationHelper(this);
+        String title = "Reservation Modified by Guest";
+        String message = "Guest " + reservation.getGuestName() + " modified reservation #" +
+                reservation.getReservationNumber() + ". New time: " + reservation.getDate() +
+                " at " + reservation.getTime();
+
+        notificationHelper.sendNotificationToUser(title, message,
+                reservation.getReservationNumber(), "staff@gmail.com");
+    }
+
+    private void sendReservationNotification(String reservationNumber) {
+        if (GuestProfileActivity.shouldSendNotification(this, "reservation_update")) {
+            NotificationHelper notificationHelper = new NotificationHelper(this);
+            String title = "Reservation Updated";
+            String message = "Your reservation " + reservationNumber + " has been updated.";
+            notificationHelper.sendReservationNotification(title, message, reservationNumber);
+        }
     }
 
     @Override

@@ -325,6 +325,7 @@
                 android:textStyle="bold"/>
 
             <EditText
+                android:id="@+id/et_special_requests"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginTop="8dp"
@@ -334,19 +335,40 @@
                 android:padding="12dp"
                 android:textColor="@color/light_text" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnConfirmBooking"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:text="Confirm Booking"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:backgroundTint="#FF6900"
-                app:cornerRadius="12dp"
-                app:rippleColor="#55FFFFFF" />
-            z
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:weightSum="2">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:text="Cancel"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:iconGravity="textStart"
+                    android:textColor="@color/black"
+                    app:backgroundTint="@color/borders"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveChanges"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:text="Save Changes"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    app:iconGravity="textStart"
+                    app:backgroundTint="@color/main_orange"
+                    app:cornerRadius="8dp"/>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

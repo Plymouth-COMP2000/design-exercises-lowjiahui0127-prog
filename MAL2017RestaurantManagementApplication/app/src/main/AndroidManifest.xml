@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,10 +14,18 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MAL2017RestaurantManagementApplication">
+        android:theme="@style/Theme.MAL2017RestaurantManagementApplication"
+        android:usesCleartextTraffic="true">
+
+        <activity android:name=".NotificationsActivity"
+            android:exported="false" />
         <activity android:name=".StaffProfileActivity"
             android:exported="false" />
         <activity android:name=".StaffReservationsActivity"
+            android:exported="false" />
+        <activity android:name=".StaffAddItemActivity"
+            android:exported="false" />
+        <activity android:name=".StaffEditItemActivity"
             android:exported="false" />
         <activity android:name=".StaffMenuActivity"
             android:exported="false" />
@@ -31,7 +43,10 @@
             android:exported="false"
             tools:ignore="Instantiatable" />
         <activity
-         android:name=".GuestMyBookingsActivity"
+            android:name=".GuestMyBookingsActivity"
+            android:exported="false" />
+        <activity
+         android:name=".GuestEditBookingActivity"
             android:exported="false" />
          <activity
          android:name=".GuestBookTableActivity"
@@ -45,16 +60,22 @@
         <activity
              android:name=".LoginActivity"
              android:exported="true">
-<!--        <activity-->
-<!--             android:name=".MainActivity"-->
-<!--             android:exported="false" />-->
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

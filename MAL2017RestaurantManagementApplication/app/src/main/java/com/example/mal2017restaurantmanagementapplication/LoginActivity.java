@@ -1,14 +1,26 @@
 package com.example.mal2017restaurantmanagementapplication;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mal2017restaurantmanagementapplication.api.VolleyApiService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,13 +32,35 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView ivPasswordToggle;
 
     private boolean isPasswordVisible = false;
+    private String currentRole = "guest";
+    private VolleyApiService apiService;
 
-    private String currentRole = "GUEST";
+    private static final int PERMISSION_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        checkAndRequestNotificationPermission();
+
+        if (UserSessionManager.isLoggedIn(this)) {
+            redirectToDashboard();
+            return;
+        }
+
+        apiService = VolleyApiService.getInstance(this);
+        apiService.createStudentDatabase(new VolleyApiService.ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.d("LoginActivity", "Student database checked/created");
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e("LoginActivity", "Database check failed: " + error);
+            }
+        });
 
         initViews();
         setupTabListeners();
@@ -36,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
         setupForgotPassword();
 
         showGuestUI();
-
         autoFillRememberedEmail();
     }
 
@@ -60,39 +93,87 @@ public class LoginActivity extends AppCompatActivity {
         ivPasswordToggle = findViewById(R.id.ivPasswordToggle);
     }
 
+    private void checkAndRequestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.POST_NOTIFICATIONS)) {
+
+                    new AlertDialog.Builder(this)
+                            .setTitle("Notification Permission")
+                            .setMessage("This app needs notification permission to send you updates about your reservations, such as booking confirmations and changes.")
+                            .setPositiveButton("Allow", (dialog, which) -> {
+                                requestNotificationPermission();
+                            })
+                            .setNegativeButton("Not Now", null)
+                            .show();
+                } else {
+                    requestNotificationPermission();
+                }
+            } else {
+                Log.d("LoginActivity", "Notification permission already granted");
+            }
+        }
+    }
+
+    private void requestNotificationPermission() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notification permission granted", Toast.LENGTH_SHORT).show();
+                Log.d("LoginActivity", "Notification permission granted by user");
+            } else {
+                Toast.makeText(this, "You can enable notifications in app settings", Toast.LENGTH_LONG).show();
+                Log.d("LoginActivity", "Notification permission denied by user");
+            }
+        }
+    }
+
     private void setupTabListeners() {
         tabGuest.setOnClickListener(v -> {
-            currentRole = "GUEST";
+            currentRole = "guest";
             showGuestUI();
         });
 
         tabStaff.setOnClickListener(v -> {
-            currentRole = "STAFF";
+            currentRole = "staff";
             showStaffUI();
         });
     }
 
     private void showGuestUI() {
-        tvGuest.setTextColor(getColor(R.color.main_orange));
-        tvStaff.setTextColor(getColor(R.color.light_text));
-        underlineGuest.setBackgroundColor(getColor(R.color.main_orange));
-        underlineStaff.setBackgroundColor(getColor(R.color.light_text));
+        tvGuest.setTextColor(getResources().getColor(R.color.main_orange));
+        tvStaff.setTextColor(getResources().getColor(R.color.light_text));
+        underlineGuest.setBackgroundColor(getResources().getColor(R.color.main_orange));
+        underlineStaff.setBackgroundColor(getResources().getColor(R.color.light_text));
 
         layoutCreateAccount.setVisibility(View.VISIBLE);
     }
 
     private void showStaffUI() {
-        tvStaff.setTextColor(getColor(R.color.main_orange));
-        tvGuest.setTextColor(getColor(R.color.light_text));
-        underlineStaff.setBackgroundColor(getColor(R.color.main_orange));
-        underlineGuest.setBackgroundColor(getColor(R.color.light_text));
+        tvStaff.setTextColor(getResources().getColor(R.color.main_orange));
+        tvGuest.setTextColor(getResources().getColor(R.color.light_text));
+        underlineStaff.setBackgroundColor(getResources().getColor(R.color.main_orange));
+        underlineGuest.setBackgroundColor(getResources().getColor(R.color.light_text));
 
         layoutCreateAccount.setVisibility(View.GONE);
     }
 
     private void autoFillRememberedEmail() {
-        String lastEmail = getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                .getString("LAST_EMAIL", "");
+        String lastEmail = UserSessionManager.getLastEmail(this);
 
         if (!lastEmail.isEmpty()) {
             etEmail.setText(lastEmail);
@@ -101,19 +182,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupPasswordToggle() {
-        ivPasswordToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isPasswordVisible = !isPasswordVisible;
-                if (isPasswordVisible) {
-                    etPassword.setTransformationMethod(null);
-                    ivPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
-                } else {
-                    etPassword.setTransformationMethod(new PasswordTransformationMethod());
-                    ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
-                }
-                etPassword.setSelection(etPassword.getText().length());
+        ivPasswordToggle.setOnClickListener(v -> {
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                etPassword.setTransformationMethod(null);
+                ivPasswordToggle.setImageResource(R.drawable.ic_visibility_on);
+            } else {
+                etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                ivPasswordToggle.setImageResource(R.drawable.ic_visibility_off);
             }
+            etPassword.setSelection(etPassword.getText().length());
         });
     }
 
@@ -122,45 +200,24 @@ public class LoginActivity extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (validateLoginFields(email, password)) {
-                Toast.makeText(this, "Login successful as " + currentRole, Toast.LENGTH_SHORT).show();
-
-                UserSessionManager.saveUserRole(this, currentRole);
-                UserSessionManager.saveUserEmail(this, email);
-                UserSessionManager.setLoggedIn(this, true);
-                UserSessionManager.setRememberMe(this, rememberMeCheck.isChecked());
-
-                // TODO: 这里添加API登录，获取userId后保存
-                // String userId = apiLogin(email, password);
-                // UserSessionManager.saveUserId(this, userId);
-
-                if (rememberMeCheck.isChecked()) {
-                    getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                            .edit()
-                            .putString("LAST_EMAIL", email)
-                            .apply();
-                } else {
-                    getSharedPreferences("LoginPrefs", MODE_PRIVATE)
-                            .edit()
-                            .remove("LAST_EMAIL")
-                            .apply();
-                }
-
-                System.out.println("=== 保存到SharedPreferences ===");
-                System.out.println("Role: " + currentRole);
-                System.out.println("Email: " + email);
-                System.out.println("Logged In: true");
-                System.out.println("Remember Me: " + rememberMeCheck.isChecked());
-
-                if (currentRole.equals("GUEST")) {
-                    startActivity(new Intent(this, GuestMenuActivity.class));
-                } else {
-                    startActivity(new Intent(this, StaffDashboardActivity.class));
-                }
-
-                finish();
+            if (!validateLoginFields(email, password)) {
+                return;
             }
+
+            if (rememberMeCheck.isChecked()) {
+                UserSessionManager.saveLastEmail(this, email);
+            } else {
+                UserSessionManager.saveLastEmail(this, "");
+            }
+
+            showLoading(true);
+            performApiLogin(email, password);
         });
+    }
+
+    private void showLoading(boolean show) {
+        btnLogin.setText(show ? "Logging in..." : "Login");
+        btnLogin.setEnabled(!show);
     }
 
     private boolean validateLoginFields(String email, String password) {
@@ -198,15 +255,88 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    private void performApiLogin(String email, String password) {
+        apiService.login(email, password, new VolleyApiService.ApiCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                runOnUiThread(() -> {
+                    showLoading(false);
+
+                    try {
+                        String role = response.getString("role");
+                        String userId = response.getString("user_id");
+                        String name = response.getString("name");
+                        String userEmail = response.getString("email");
+
+                        if (!role.equalsIgnoreCase(currentRole)) {
+                            String message;
+                            if (role.equals("staff")) {
+                                message = "This is a staff account. Please switch to Staff tab.";
+                            } else {
+                                message = "This is a guest account. Please switch to Guest tab.";
+                            }
+
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        UserSessionManager.createLoginSession(
+                                LoginActivity.this,
+                                userId,
+                                name,
+                                userEmail,
+                                role
+                        );
+
+                        redirectToDashboard();
+
+                    } catch (JSONException e) {
+                        Toast.makeText(LoginActivity.this,
+                                "Login response error: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    showLoading(false);
+                    Toast.makeText(LoginActivity.this,
+                            "Login failed: " + error,
+                            Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void redirectToDashboard() {
+        String role = UserSessionManager.getUserRole(this);
+
+        Intent intent;
+        if (role.equalsIgnoreCase("staff")) {
+            intent = new Intent(this, StaffDashboardActivity.class);
+        } else {
+            intent = new Intent(this, GuestMenuActivity.class);
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     private void setupCreateAccount() {
         tvCreateAccount.setOnClickListener(v -> {
-            startActivity(new Intent(this, GuestCreateAccountActivity.class));
+            if (currentRole.equals("guest")) {
+                startActivity(new Intent(this, GuestCreateAccountActivity.class));
+            } else {
+                Toast.makeText(this, "Staff accounts can only be created by administrators", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void setupForgotPassword() {
         tvForgotPassword.setOnClickListener(v -> {
-            // 简单的忘记密码提示
             showForgotPasswordDialog();
         });
     }

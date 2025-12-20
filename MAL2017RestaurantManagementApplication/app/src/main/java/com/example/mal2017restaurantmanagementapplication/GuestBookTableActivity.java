@@ -1,13 +1,19 @@
 package com.example.mal2017restaurantmanagementapplication;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +21,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class GuestBookTableActivity extends BaseGuestActivity {
@@ -25,6 +32,8 @@ public class GuestBookTableActivity extends BaseGuestActivity {
     private EditText etSpecialRequests;
     private DatabaseHelper dbHelper;
     private String selectedTime = "";
+    private String guestName;
+    private String guestEmail;
 
     @Override
     protected int getCurrentNavId() {
@@ -38,6 +47,8 @@ public class GuestBookTableActivity extends BaseGuestActivity {
 
         setupBottomNav();
         dbHelper = new DatabaseHelper(this);
+        guestName = UserSessionManager.getUserName(this);
+        guestEmail = UserSessionManager.getUserEmail(this);
 
         initializeUI();
         setupDatePicker();
@@ -51,13 +62,19 @@ public class GuestBookTableActivity extends BaseGuestActivity {
         tvDateValue = findViewById(R.id.tvDateValue);
         etSpecialRequests = findViewById(R.id.et_special_requests);
 
-        // Set default date to tomorrow
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String tomorrow = dateFormat.format(calendar.getTime());
         tvDateValue.setText(tomorrow);
         tvDateValue.setTextColor(Color.BLACK);
+
+        // Set up notification bell click
+        ImageView icBell = findViewById(R.id.ic_bell);
+        icBell.setOnClickListener(v -> {
+            Intent intent = new Intent(GuestBookTableActivity.this, NotificationsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setupDatePicker() {
@@ -112,22 +129,23 @@ public class GuestBookTableActivity extends BaseGuestActivity {
             View child = timeGrid.getChildAt(i);
             if (child instanceof MaterialButton) {
                 MaterialButton btn = (MaterialButton) child;
+                btn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F5F5F5")));
+                btn.setStrokeWidth(0);
+                btn.setTextColor(Color.parseColor("#333333"));
+
                 btn.setOnClickListener(v -> {
-                    // Reset previous button
                     if (selectedTimeButton != null) {
                         selectedTimeButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F5F5F5")));
                         selectedTimeButton.setStrokeWidth(0);
                         selectedTimeButton.setTextColor(Color.parseColor("#333333"));
                     }
 
-                    // Highlight selected button
                     selectedTimeButton = btn;
                     selectedTimeButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFF8F2")));
                     selectedTimeButton.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#FF6900")));
                     selectedTimeButton.setStrokeWidth(4);
                     selectedTimeButton.setTextColor(Color.parseColor("#FF6900"));
 
-                    // Store selected time
                     selectedTime = btn.getText().toString();
                 });
             }
@@ -140,7 +158,6 @@ public class GuestBookTableActivity extends BaseGuestActivity {
     }
 
     private void createReservation() {
-        // Validate inputs
         if (selectedTime.isEmpty()) {
             Toast.makeText(this, "Please select a time", Toast.LENGTH_SHORT).show();
             return;
@@ -149,21 +166,29 @@ public class GuestBookTableActivity extends BaseGuestActivity {
         String date = tvDateValue.getText().toString();
         String specialRequests = etSpecialRequests.getText().toString().trim();
 
-        // Check for date format
         if (date.equals("dd/mm/yyyy")) {
             Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check for time conflicts
         if (dbHelper.hasConflictingReservation(date, selectedTime, 0)) {
             Toast.makeText(this, "This time slot is already booked. Please choose another time.",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        // Create reservation object
+        String guestName = UserSessionManager.getUserName(this);
+        String guestEmail = UserSessionManager.getUserEmail(this);
+
+        if (guestEmail.isEmpty()) {
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
+            UserSessionManager.logout(this);
+            return;
+        }
+
         Reservation reservation = new Reservation();
+        reservation.setGuestName(guestName);
+        reservation.setGuestEmail(guestEmail);
         reservation.setDate(date);
         reservation.setTime(selectedTime);
         reservation.setGuestCount(guestCount);
@@ -171,45 +196,51 @@ public class GuestBookTableActivity extends BaseGuestActivity {
         reservation.setStatus("pending");
         reservation.setReservationNumber(dbHelper.getNextReservationNumber());
 
-        // Save to database
         long reservationId = dbHelper.addReservation(reservation);
 
         if (reservationId != -1) {
-            // Show success message with reservation number
-            String message = "Reservation submitted! Your reservation " +
-                    reservation.getReservationNumber() + " is pending approval.";
+            sendGuestNotification(reservation, "created");
+            sendStaffNotification(reservation, "new");
+
+            String message = "Reservation " + reservation.getReservationNumber() +
+                    " submitted successfully!";
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
-            // Send notification
-            sendNotification("Reservation Submitted",
-                    "Your reservation " + reservation.getReservationNumber() + " is pending approval.");
-
-            // Navigate to My Bookings page
             Intent intent = new Intent(this, GuestMyBookingsActivity.class);
             startActivity(intent);
             finish();
-        } else {
-            Toast.makeText(this, "Failed to create reservation. Please try again.",
-                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void sendNotification(String title, String message) {
-        // This is a simplified notification
-        // In a real app, you would use NotificationCompat.Builder
-        Toast.makeText(this, title + ": " + message, Toast.LENGTH_LONG).show();
+    private void sendGuestNotification(Reservation reservation, String action) {
+        if (GuestProfileActivity.shouldSendNotification(this,
+                action.equals("created") ? "booking_confirmation" : "general")) {
+            NotificationHelper notificationHelper = new NotificationHelper(this);
+            String title = "Reservation Submitted!";
+            String message = "Your reservation #" + reservation.getReservationNumber() +
+                    " is pending approval for " + reservation.getDate() + " at " + reservation.getTime();
 
-        // TODO: Implement actual notification system
-        // NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // if (notificationManager != null) {
-        //     NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-        //         .setSmallIcon(R.drawable.ic_notification)
-        //         .setContentTitle(title)
-        //         .setContentText(message)
-        //         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        //
-        //     notificationManager.notify((int) System.currentTimeMillis(), builder.build());
-        // }
+            notificationHelper.sendReservationNotification(title, message, reservation.getReservationNumber());
+        }
+    }
+
+    private void sendStaffNotification(Reservation reservation, String action) {
+        NotificationHelper notificationHelper = new NotificationHelper(this);
+        String title = "New Reservation Request";
+        String message = "Guest " + reservation.getGuestName() + " created a new reservation #" +
+                reservation.getReservationNumber() + " for " + reservation.getDate() + " at " +
+                reservation.getTime() + " (" + reservation.getGuestCount() + " guests)";
+
+        notificationHelper.sendNotificationToUser(title, message,
+                reservation.getReservationNumber(), "staff@gmail.com");
+    }
+
+    private boolean checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        }
+        return true;
     }
 
     @Override

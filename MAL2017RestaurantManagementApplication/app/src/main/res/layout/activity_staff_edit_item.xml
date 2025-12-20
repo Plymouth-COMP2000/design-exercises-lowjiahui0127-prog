@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/background"
     android:padding="20dp">
 
+    <!-- Header with back button -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp">
+
         <ImageView
+            android:id="@+id/btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_back" />
+            android:src="@drawable/ic_back"
+            android:layout_centerVertical="true" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,16 +40,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Food Image -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginBottom="20dp">
+
                 <ImageView
+                    android:id="@+id/iv_food_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/pizza1"
                     android:scaleType="centerCrop"
                     android:background="@drawable/bg_card_rounded"/>
+
                 <ImageView
                     android:layout_width="45dp"
                     android:layout_height="45dp"
@@ -53,61 +62,89 @@
                     android:src="@drawable/ic_uploadimage"/>
             </FrameLayout>
 
+            <!-- Category -->
             <TextView
                 android:text="Category"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
             <Spinner
+                android:id="@+id/spinner_category"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/search_bg"/>
 
-            <TextView android:text="Item Name" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <!-- Item Name -->
+            <TextView
+                android:text="Item Name"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <EditText
+                android:id="@+id/et_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:paddingStart="12dp"
                 android:background="@drawable/search_bg"
-                android:text="Hawaiian Thin Crust" />
+                android:hint="Hawaiian Thin Crust"
+                android:textColorHint="@color/black" />
 
-            <TextView android:text="Price (RM)" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <!-- Price -->
+            <TextView
+                android:text="Price (RM)"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <EditText
+                android:id="@+id/et_price"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:paddingStart="12dp"
                 android:background="@drawable/search_bg"
-                android:text="18.99"
-                android:inputType="numberDecimal"/>
+                android:hint="18.99"
+                android:inputType="numberDecimal"
+                android:textColorHint="@color/black"/>
 
-            <TextView android:text="Description" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <!-- Description -->
+            <TextView
+                android:text="Description"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <EditText
+                android:id="@+id/et_description"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginTop="8dp"
                 android:padding="12dp"
                 android:gravity="top"
                 android:background="@drawable/search_bg"
-                android:text="10 Thin crust pizza topped with mozzarella..." />
+                android:hint="10 Thin crust pizza topped with mozzarella cheese, red sauce, chicken toast slices, pineapple, yellow onion."
+                android:textColorHint="@color/black" />
 
+            <!-- Buttons Layout -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCancel"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:layout_marginTop="10dp"
                     android:text="Cancel"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -118,14 +155,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveChanges"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="8dp"
                     android:text="Save Changes"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_marginStart="8dp"
                     app:iconGravity="textStart"
                     app:backgroundTint="@color/main_orange"
                     app:cornerRadius="8dp"/>

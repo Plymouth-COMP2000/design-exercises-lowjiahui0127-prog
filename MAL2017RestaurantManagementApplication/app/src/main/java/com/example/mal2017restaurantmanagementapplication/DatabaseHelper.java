@@ -15,15 +15,12 @@ import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    // Database Information
     private static final String DATABASE_NAME = "restaurant.db";
     private static final int DATABASE_VERSION = 1;
 
-    // Table Names
     private static final String TABLE_MENU = "menu";
     private static final String TABLE_RESERVATIONS = "reservations";
 
-    // Menu Table Columns
     private static final String KEY_MENU_ID = "id";
     private static final String KEY_MENU_NAME = "name";
     private static final String KEY_MENU_PRICE = "price";
@@ -31,8 +28,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_MENU_CATEGORY = "category";
     private static final String KEY_MENU_IMAGE_PATH = "image_path";
 
-    // Reservations Table Columns
     private static final String KEY_RESERVATION_ID = "id";
+    private static final String KEY_GUEST_NAME = "guest_name";
+    private static final String KEY_GUEST_EMAIL = "guest_email";
     private static final String KEY_RESERVATION_DATE = "date";
     private static final String KEY_RESERVATION_TIME = "time";
     private static final String KEY_GUEST_COUNT = "guest_count";
@@ -41,7 +39,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_RESERVATION_NUMBER = "reservation_number";
     private static final String KEY_CREATED_AT = "created_at";
 
-    // Table Creation SQL Statements
     private static final String CREATE_TABLE_MENU = "CREATE TABLE " + TABLE_MENU + "("
             + KEY_MENU_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MENU_NAME + " TEXT NOT NULL,"
@@ -53,6 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_RESERVATIONS = "CREATE TABLE " + TABLE_RESERVATIONS + "("
             + KEY_RESERVATION_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_GUEST_NAME + " TEXT NOT NULL,"
+            + KEY_GUEST_EMAIL + " TEXT NOT NULL,"
             + KEY_RESERVATION_DATE + " TEXT NOT NULL,"
             + KEY_RESERVATION_TIME + " TEXT NOT NULL,"
             + KEY_GUEST_COUNT + " INTEGER NOT NULL,"
@@ -68,27 +67,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create tables
         db.execSQL(CREATE_TABLE_MENU);
         db.execSQL(CREATE_TABLE_RESERVATIONS);
 
-        // Insert sample menu items
         insertSampleMenuItems(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older tables if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MENU);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RESERVATIONS);
 
-        // Create tables again
         onCreate(db);
     }
 
-    // ==================== MENU ITEMS OPERATIONS ====================
-
-    // Insert sample menu items (for initial setup)
+    // ==================== SAMPLE DATA ====================
     private void insertSampleMenuItems(SQLiteDatabase db) {
         List<MenuItem> sampleItems = new ArrayList<>();
 
@@ -123,24 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Add new menu item
-    public long addMenuItem(MenuItem menuItem) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_MENU_NAME, menuItem.getName());
-        values.put(KEY_MENU_PRICE, menuItem.getPrice());
-        values.put(KEY_MENU_DESCRIPTION, menuItem.getDescription());
-        values.put(KEY_MENU_CATEGORY, menuItem.getCategory());
-        values.put(KEY_MENU_IMAGE_PATH, menuItem.getImagePath());
-
-        long id = db.insert(TABLE_MENU, null, values);
-        db.close();
-
-        return id;
-    }
-
-    // Get all menu items
+    // ==================== MENU ====================
     public List<MenuItem> getAllMenuItems() {
         List<MenuItem> menuItems = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_MENU + " ORDER BY " + KEY_MENU_ID;
@@ -168,7 +144,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return menuItems;
     }
 
-    // Get menu item by ID
     public MenuItem getMenuItemById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_MENU +
@@ -193,7 +168,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return menuItem;
     }
 
-    // Update menu item
+    public long addMenuItem(MenuItem menuItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_MENU_NAME, menuItem.getName());
+        values.put(KEY_MENU_PRICE, menuItem.getPrice());
+        values.put(KEY_MENU_DESCRIPTION, menuItem.getDescription());
+        values.put(KEY_MENU_CATEGORY, menuItem.getCategory());
+        values.put(KEY_MENU_IMAGE_PATH, menuItem.getImagePath());
+
+        long id = db.insert(TABLE_MENU, null, values);
+        db.close();
+
+        return id;
+    }
+
     public int updateMenuItem(MenuItem menuItem) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -213,7 +203,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    // Delete menu item
     public int deleteMenuItem(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rowsAffected = db.delete(TABLE_MENU,
@@ -225,116 +214,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    // Search menu items by name or description
-    public List<MenuItem> searchMenuItems(String query) {
-        List<MenuItem> menuItems = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_MENU +
-                " WHERE " + KEY_MENU_NAME + " LIKE ? OR " +
-                KEY_MENU_DESCRIPTION + " LIKE ?";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery,
-                new String[]{"%" + query + "%", "%" + query + "%"});
-
-        if (cursor.moveToFirst()) {
-            do {
-                MenuItem item = new MenuItem();
-                item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MENU_ID)));
-                item.setName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_NAME)));
-                item.setPrice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_PRICE)));
-                item.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_DESCRIPTION)));
-                item.setCategory(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_CATEGORY)));
-                item.setImagePath(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_IMAGE_PATH)));
-
-                menuItems.add(item);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return menuItems;
-    }
-
-    // Get menu items by category
-    public List<MenuItem> getMenuItemsByCategory(String category) {
-        List<MenuItem> menuItems = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_MENU +
-                " WHERE " + KEY_MENU_CATEGORY + " = ?";
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{category});
-
-        if (cursor.moveToFirst()) {
-            do {
-                MenuItem item = new MenuItem();
-                item.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MENU_ID)));
-                item.setName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_NAME)));
-                item.setPrice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_PRICE)));
-                item.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_DESCRIPTION)));
-                item.setCategory(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_CATEGORY)));
-                item.setImagePath(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MENU_IMAGE_PATH)));
-
-                menuItems.add(item);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return menuItems;
-    }
-
-    // Get distinct categories
-    public List<String> getDistinctCategories() {
-        List<String> categories = new ArrayList<>();
-        String selectQuery = "SELECT DISTINCT " + KEY_MENU_CATEGORY +
-                " FROM " + TABLE_MENU +
-                " ORDER BY " + KEY_MENU_CATEGORY;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                String category = cursor.getString(0);
-                if (category != null && !category.isEmpty()) {
-                    categories.add(category);
-                }
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        // Add "All Categories" option
-        categories.add(0, "All Categories");
-
-        return categories;
-    }
-
-    // ==================== RESERVATION OPERATIONS ====================
-
-    // Add a new reservation
+    // ==================== RESERVATION ====================
     public long addReservation(Reservation reservation) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_RESERVATION_DATE, reservation.getDate());
-        values.put(KEY_RESERVATION_TIME, reservation.getTime());
-        values.put(KEY_GUEST_COUNT, reservation.getGuestCount());
-        values.put(KEY_SPECIAL_REQUESTS, reservation.getSpecialRequests());
-        values.put(KEY_STATUS, reservation.getStatus());
-        values.put(KEY_RESERVATION_NUMBER, reservation.getReservationNumber());
-        values.put(KEY_CREATED_AT, reservation.getCreatedAt());
+            ContentValues values = new ContentValues();
+            values.put(KEY_GUEST_NAME, reservation.getGuestName());
+            values.put(KEY_GUEST_EMAIL, reservation.getGuestEmail());
+            values.put(KEY_RESERVATION_DATE, reservation.getDate());
+            values.put(KEY_RESERVATION_TIME, reservation.getTime());
+            values.put(KEY_GUEST_COUNT, reservation.getGuestCount());
+            values.put(KEY_SPECIAL_REQUESTS, reservation.getSpecialRequests());
+            values.put(KEY_STATUS, reservation.getStatus());
+            values.put(KEY_RESERVATION_NUMBER, reservation.getReservationNumber());
+            values.put(KEY_CREATED_AT, System.currentTimeMillis());
 
-        long id = db.insert(TABLE_RESERVATIONS, null, values);
-        db.close();
+            long id = db.insert(TABLE_RESERVATIONS, null, values);
 
-        return id;
+            Log.d("DatabaseHelper", "Reservation inserted with ID: " + id);
+            Log.d("DatabaseHelper", "Reservation Number: " + reservation.getReservationNumber());
+            Log.d("DatabaseHelper", "Guest Email: " + reservation.getGuestEmail());
+
+            return id;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error inserting reservation: " + e.getMessage());
+            e.printStackTrace();
+            return -1;
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 
-    // Get all reservations
     public List<Reservation> getAllReservations() {
         List<Reservation> reservations = new ArrayList<>();
         String selectQuery = "SELECT * FROM " + TABLE_RESERVATIONS +
@@ -348,6 +262,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 Reservation reservation = new Reservation();
                 reservation.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_RESERVATION_ID)));
+                reservation.setGuestName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_GUEST_NAME)));
+                reservation.setGuestEmail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_GUEST_EMAIL)));
                 reservation.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_DATE)));
                 reservation.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_TIME)));
                 reservation.setGuestCount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_GUEST_COUNT)));
@@ -366,81 +282,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return reservations;
     }
 
-    // Get upcoming reservations (not cancelled)
-    public List<Reservation> getUpcomingReservations() {
-        List<Reservation> reservations = new ArrayList<>();
-
-        // Get current date
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String currentDate = dateFormat.format(calendar.getTime());
-
-        String selectQuery = "SELECT * FROM " + TABLE_RESERVATIONS +
-                " WHERE (" + KEY_RESERVATION_DATE + " > ? OR " +
-                "(" + KEY_RESERVATION_DATE + " = ? AND " + KEY_RESERVATION_TIME + " >= ?))" +
-                " AND " + KEY_STATUS + " != 'cancelled'" +
-                " ORDER BY " + KEY_RESERVATION_DATE + " ASC, " +
-                KEY_RESERVATION_TIME + " ASC";
-
-        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.getTime());
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{currentDate, currentDate, currentTime});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Reservation reservation = new Reservation();
-                reservation.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_RESERVATION_ID)));
-                reservation.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_DATE)));
-                reservation.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_TIME)));
-                reservation.setGuestCount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_GUEST_COUNT)));
-                reservation.setSpecialRequests(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SPECIAL_REQUESTS)));
-                reservation.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
-                reservation.setReservationNumber(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_NUMBER)));
-                reservation.setCreatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(KEY_CREATED_AT)));
-
-                reservations.add(reservation);
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        db.close();
-
-        return reservations;
-    }
-
-    // Get reservation by ID
-    public Reservation getReservationById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TABLE_RESERVATIONS +
-                " WHERE " + KEY_RESERVATION_ID + " = ?";
-
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
-
-        Reservation reservation = null;
-        if (cursor.moveToFirst()) {
-            reservation = new Reservation();
-            reservation.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_RESERVATION_ID)));
-            reservation.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_DATE)));
-            reservation.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_TIME)));
-            reservation.setGuestCount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_GUEST_COUNT)));
-            reservation.setSpecialRequests(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SPECIAL_REQUESTS)));
-            reservation.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
-            reservation.setReservationNumber(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_NUMBER)));
-            reservation.setCreatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(KEY_CREATED_AT)));
-        }
-
-        cursor.close();
-        db.close();
-
-        return reservation;
-    }
-
-    // Update reservation
     public int updateReservation(Reservation reservation) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_GUEST_NAME, reservation.getGuestName());
+        values.put(KEY_GUEST_EMAIL, reservation.getGuestEmail());
         values.put(KEY_RESERVATION_DATE, reservation.getDate());
         values.put(KEY_RESERVATION_TIME, reservation.getTime());
         values.put(KEY_GUEST_COUNT, reservation.getGuestCount());
@@ -456,35 +303,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    // Cancel reservation (change status to cancelled)
-    public int cancelReservation(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public Reservation getReservationById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_RESERVATIONS +
+                " WHERE " + KEY_RESERVATION_ID + " = ?";
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_STATUS, "cancelled");
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
 
-        int rowsAffected = db.update(TABLE_RESERVATIONS, values,
-                KEY_RESERVATION_ID + " = ?",
-                new String[]{String.valueOf(id)});
+        Reservation reservation = null;
+        if (cursor.moveToFirst()) {
+            reservation = new Reservation();
+            reservation.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_RESERVATION_ID)));
+            reservation.setGuestName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_GUEST_NAME)));
+            reservation.setGuestEmail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_GUEST_EMAIL)));
+            reservation.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_DATE)));
+            reservation.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_TIME)));
+            reservation.setGuestCount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_GUEST_COUNT)));
+            reservation.setSpecialRequests(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SPECIAL_REQUESTS)));
+            reservation.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+            reservation.setReservationNumber(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_NUMBER)));
+            reservation.setCreatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(KEY_CREATED_AT)));
+        }
 
+        cursor.close();
         db.close();
 
-        return rowsAffected;
+        return reservation;
     }
 
-    // Delete reservation permanently
-    public int deleteReservation(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int rowsAffected = db.delete(TABLE_RESERVATIONS,
-                KEY_RESERVATION_ID + " = ?",
-                new String[]{String.valueOf(id)});
+    public String getNextReservationNumber() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT MAX(" + KEY_RESERVATION_ID + ") FROM " + TABLE_RESERVATIONS;
 
+        Cursor cursor = db.rawQuery(query, null);
+        int maxId = 0;
+        if (cursor.moveToFirst()) {
+            maxId = cursor.getInt(0);
+        }
+
+        cursor.close();
         db.close();
 
-        return rowsAffected;
+        return "B" + String.format("%03d", maxId + 1);
     }
 
-    // Check for conflicting reservations (same date and time, not cancelled)
     public boolean hasConflictingReservation(String date, String time, int excludeId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query;
@@ -515,69 +377,130 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    // Get next reservation number
-    public String getNextReservationNumber() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT MAX(" + KEY_RESERVATION_ID + ") FROM " + TABLE_RESERVATIONS;
-
-        Cursor cursor = db.rawQuery(query, null);
-        int maxId = 0;
-        if (cursor.moveToFirst()) {
-            maxId = cursor.getInt(0);
-        }
-
-        cursor.close();
-        db.close();
-
-        return "B" + String.format("%03d", maxId + 1);
+    public int getUnreadNotificationCount(int userId) {
+        return 0;
     }
 
-    // Get reservations by status
+    public List<Reservation> getUpcomingReservationsByUser(String email) {
+        List<Reservation> userReservations = new ArrayList<>();
+        List<Reservation> allReservations = getAllReservations();
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(calendar.getTime());
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.getTime());
+
+        for (Reservation reservation : allReservations) {
+            if (reservation.getGuestEmail().equals(email)) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+                    String reservationDateTime = reservation.getDate() + " " + reservation.getTime();
+                    String currentDateTime = currentDate + " " + currentTime;
+
+                    java.util.Date reservationDate = sdf.parse(reservationDateTime);
+                    java.util.Date currentDateObj = sdf.parse(currentDateTime);
+
+                    if (reservationDate.after(currentDateObj) || reservationDate.equals(currentDateObj)) {
+                        userReservations.add(reservation);
+                    }
+                } catch (Exception e) {
+                    userReservations.add(reservation);
+                }
+            }
+        }
+
+        return userReservations;
+    }
+
+    public List<Reservation> searchReservations(String query) {
+        List<Reservation> filteredReservations = new ArrayList<>();
+        List<Reservation> allReservations = getAllReservations();
+
+        for (Reservation reservation : allReservations) {
+            if (reservation.getGuestName().toLowerCase().contains(query.toLowerCase()) ||
+                    reservation.getGuestEmail().toLowerCase().contains(query.toLowerCase()) ||
+                    reservation.getReservationNumber().toLowerCase().contains(query.toLowerCase())) {
+                filteredReservations.add(reservation);
+            }
+        }
+
+        return filteredReservations;
+    }
+
     public List<Reservation> getReservationsByStatus(String status) {
-        List<Reservation> reservations = new ArrayList<>();
-        String selectQuery = "SELECT * FROM " + TABLE_RESERVATIONS +
-                " WHERE " + KEY_STATUS + " = ?" +
-                " ORDER BY " + KEY_RESERVATION_DATE + " ASC, " +
-                KEY_RESERVATION_TIME + " ASC";
+        List<Reservation> filteredReservations = new ArrayList<>();
+        List<Reservation> allReservations = getAllReservations();
 
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{status});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Reservation reservation = new Reservation();
-                reservation.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_RESERVATION_ID)));
-                reservation.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_DATE)));
-                reservation.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_TIME)));
-                reservation.setGuestCount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_GUEST_COUNT)));
-                reservation.setSpecialRequests(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SPECIAL_REQUESTS)));
-                reservation.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
-                reservation.setReservationNumber(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESERVATION_NUMBER)));
-                reservation.setCreatedAt(cursor.getLong(cursor.getColumnIndexOrThrow(KEY_CREATED_AT)));
-
-                reservations.add(reservation);
-            } while (cursor.moveToNext());
+        for (Reservation reservation : allReservations) {
+            if (status.equals(reservation.getStatus())) {
+                filteredReservations.add(reservation);
+            }
         }
 
-        cursor.close();
-        db.close();
-
-        return reservations;
+        return filteredReservations;
     }
 
-    // Get pending reservations count (for staff notifications)
+    public int getMenuItemsCount() {
+        List<MenuItem> items = getAllMenuItems();
+        return items.size();
+    }
+
+    public int getTotalReservationsCount() {
+        List<Reservation> reservations = getAllReservations();
+        return reservations.size();
+    }
+
     public int getPendingReservationsCount() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT COUNT(*) FROM " + TABLE_RESERVATIONS +
-                " WHERE " + KEY_STATUS + " = 'pending'";
-
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-
-        cursor.close();
-        db.close();
-
+        int count = 0;
+        List<Reservation> allReservations = getAllReservations();
+        for (Reservation reservation : allReservations) {
+            if ("pending".equals(reservation.getStatus())) {
+                count++;
+            }
+        }
         return count;
+    }
+
+    public List<String> getDistinctCategories() {
+        List<String> categories = new ArrayList<>();
+        List<MenuItem> items = getAllMenuItems();
+
+        for (MenuItem item : items) {
+            String category = item.getCategory();
+            if (category != null && !category.isEmpty() && !categories.contains(category)) {
+                categories.add(category);
+            }
+        }
+
+        categories.add(0, "All Categories");
+
+        return categories;
+    }
+
+    public List<MenuItem> getMenuItemsByCategory(String category) {
+        List<MenuItem> filteredItems = new ArrayList<>();
+        List<MenuItem> items = getAllMenuItems();
+
+        for (MenuItem item : items) {
+            if (item.getCategory() != null && item.getCategory().equals(category)) {
+                filteredItems.add(item);
+            }
+        }
+
+        return filteredItems;
+    }
+
+    public List<MenuItem> searchMenuItems(String query) {
+        List<MenuItem> filteredItems = new ArrayList<>();
+        List<MenuItem> items = getAllMenuItems();
+
+        for (MenuItem item : items) {
+            if (item.getName().toLowerCase().contains(query.toLowerCase()) ||
+                    item.getDescription().toLowerCase().contains(query.toLowerCase())) {
+                filteredItems.add(item);
+            }
+        }
+
+        return filteredItems;
     }
 }

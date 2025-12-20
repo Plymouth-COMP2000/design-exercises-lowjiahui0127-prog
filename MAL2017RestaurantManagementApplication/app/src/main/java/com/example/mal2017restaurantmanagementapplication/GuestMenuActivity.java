@@ -69,6 +69,13 @@ public class GuestMenuActivity extends BaseGuestActivity {
         etSearch = findViewById(R.id.et_search);
         ivSearchButton = findViewById(R.id.iv_search_button);
         spinnerCategory = findViewById(R.id.spinner_category);
+
+        // Set up notification bell click
+        ImageView icBell = findViewById(R.id.ic_bell);
+        icBell.setOnClickListener(v -> {
+            Intent intent = new Intent(GuestMenuActivity.this, NotificationsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadMenuItems() {

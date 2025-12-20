@@ -44,13 +44,14 @@
             </LinearLayout>
 
             <FrameLayout
+                android:id="@+id/notification_icon_container"
                 android:layout_width="48dp"
                 android:layout_height="48dp">
 
                 <ImageView
                     android:id="@+id/ic_bell"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:src="@drawable/ic_bell"
                     android:layout_gravity="center"/>
 
@@ -60,7 +61,7 @@
                     android:layout_height="18dp"
                     android:background="@drawable/pill_label"
                     android:gravity="center"
-                    android:text="2"
+                    android:text="0"
                     android:textSize="10sp"
                     android:textColor="@android:color/white"
                     android:layout_marginTop="4dp"
@@ -68,6 +69,141 @@
                     android:padding="0dp"
                     android:translationX="0dp"/>
             </FrameLayout>
+        </LinearLayout>
+
+        <!-- Search bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"
+            android:background="@drawable/search_bg"
+            android:layout_marginTop="16dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Search by name, email or booking ID..."
+                android:textColor="@color/light_text"
+                android:background="@null"
+                android:padding="0dp"/>
+
+            <ImageView
+                android:id="@+id/iv_search_button"
+                android:src="@drawable/ic_search"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+
+        <!-- Status filter buttons with counts -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
+
+            <!-- Filter Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tv_filter_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Filter: Pending Reservations"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/light_text"/>
+
+                <TextView
+                    android:id="@+id/tv_reset_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show All"
+                    android:textSize="12sp"
+                    android:textColor="@color/main_orange"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
+            <!-- Scrollable Filter Buttons -->
+            <HorizontalScrollView
+                android:id="@+id/filter_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:fadeScrollbars="true">
+
+                <LinearLayout
+                    android:id="@+id/filter_buttons_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp"
+                    android:paddingEnd="8dp">
+
+                    <!-- 动态添加的按钮会在这里显示 -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFilterAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="All (0)"
+                        android:textColor="@android:color/white"
+                        app:backgroundTint="@color/main_orange"
+                        app:cornerRadius="18dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFilterPending"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Pending (0)"
+                        android:textColor="@android:color/white"
+                        app:backgroundTint="@color/status_pending"
+                        app:cornerRadius="18dp"
+                        app:strokeColor="@color/status_pending"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFilterConfirmed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Confirmed (0)"
+                        android:textColor="@android:color/black"
+                        app:backgroundTint="@android:color/transparent"
+                        app:strokeColor="@color/status_confirmed"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="18dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFilterCancelled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Cancelled (0)"
+                        android:textColor="@android:color/black"
+                        app:backgroundTint="@android:color/transparent"
+                        app:strokeColor="@color/status_cancelled"
+                        app:strokeWidth="1dp"
+                        app:cornerRadius="18dp"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
     </LinearLayout>
 
