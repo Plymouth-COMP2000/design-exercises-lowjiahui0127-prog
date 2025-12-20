@@ -16,7 +16,7 @@ This Android mobile application was developed as part of the MAL2017 Software En
 
 ## Third-Party Libraries
 - **Volley (v1.2.1):** Used for managing network requests and API communication with the central server.
-- **Material Design Components:** Used for implementing modern UI elements like Bottom Navigation, CardViews, and Floating Action Buttons.
+- **Material Design Components:** Used for implementing modern UI elements.
 - **SQLite OpenHelper:** Used for local relational database management.
 
 ## Installation
