@@ -24,3 +24,7 @@ This Android mobile application was developed as part of the MAL2017 Software En
 2. Open in Android Studio
 3. Sync Gradle
 4. Run on emulator or physical device (API 24+)
+
+## Video Presentation
+- Video Presentation Link (Assessment 1) : https://youtu.be/sGJaFvy82a4
+- Video Presentation Link (Assessment 2) : https://youtu.be/pPbcioX7N_E
